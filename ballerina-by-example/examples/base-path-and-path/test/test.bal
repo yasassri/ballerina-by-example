@@ -9,12 +9,12 @@ function testFunc() {
 
 endpoint http:ClientEndpoint httpEndpoint { targets:[{ url:eventServiceEP }] };
 http:Request req = new;
-req.setStringPayload();
-var response = httpEndpoint -> get("/", req);
+req.setJsonPayload();
+var response = httpEndpoint -> get("/foo/bar", req);
 
 match response {
 http:Response resp => {
-var jsonRes = resp.setStringPayload();
+var jsonRes = resp.getJsonPayload();
 match jsonRes {
 json payload => return payload;
 mime:EntityError err => io:println(err);

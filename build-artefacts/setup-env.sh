@@ -13,8 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-GET_DISTRO_FROM_CUSTOM_LOCATION=fasle
-CUSTOM_DISTRO_LOCATION="http://10.100.5.112:8000/ballerina-tools-0.93.1-SNAPSHOT.zip"
+GET_DISTRO_FROM_CUSTOM_LOCATION=false
+CUSTOM_DISTRO_LOCATION="http://10.100.5.112:8000/bal.zip"
+
+# Create a temp directory
+mkdir tmp
+cd tmp
 
 if [ "$GET_DISTRO_FROM_CUSTOM_LOCATION" = true ]; then
 
@@ -35,15 +39,20 @@ latest_successfull_build_url=$(echo $latest_successfull_build | sed -n 's:.*<url
 echo "Latest Successful Build URL : "$latest_successfull_build_url
 
 # Get the relativePath of the distribution pack
-dirtribution_url=$(curl -s -G $latest_successfull_build_url"org.ballerinalang\$ballerina/api/xml" -d xpath=\(/mavenBuild//relativePath\)[2])
-
+dirtribution_url=$(curl -s -G $latest_successfull_build_url"org.ballerinalang\$ballerina-tools/api/xml" -d "xpath=//artifact[2]/relativePath")
 # Extracting the relative path to the distribution pack
 downloadable_url=$(echo $dirtribution_url | sed -n 's:.*<relativePath>\(.*\)</relativePath>.*:\1:p')
 
-#https://wso2.org/jenkins/job/ballerina-platform/job/ballerina/1675/org.ballerinalang$ballerina/artifact/org.ballerinalang/ballerina/0.970.0-alpha1-SNAPSHOT/ballerina-0.970.0-alpha1-SNAPSHOT.zip
 echo "Downloadable URL : " $latest_successfull_build_url"org.ballerinalang\$ballerina-tools/artifact/"$downloadable_url
-wget $latest_successfull_build_url"org.ballerinalang.tools\$ballerina-tools/artifact/"$downloadable_url
+wget $latest_successfull_build_url"org.ballerinalang\$ballerina-tools/artifact/"$downloadable_url
 
 fi
 
+# Unzip the ballerina distribution
+unzip -q ballerina-tools-*.zip
 
+# Remove the ballerina zip file
+rm -rf ballerina-tools-*.zip
+
+# Rename the unzip directory
+mv ballerina-tools-* ballerina
