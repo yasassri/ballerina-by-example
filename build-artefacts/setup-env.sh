@@ -56,3 +56,5 @@ rm -rf ballerina-tools-*.zip
 
 # Rename the unzip directory
 mv ballerina-tools-* ballerina
+
+chmod +x ballerina/bin/ballerina
